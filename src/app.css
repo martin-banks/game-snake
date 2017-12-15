@@ -8,23 +8,29 @@ body {
 	padding: 0;
 }
 
-[data-type=tile]{
+[data-type=tile],
+[data-type=snake],
+[data-type=wall],
+[data-type=loot] {
 	position: absolute;
 	display: inline-block;
 	top: 0;
 	left: 0;
 	width: 1vw;
 	height: 1vh;
-	background: lightgrey;
+	/*background: lightgrey;*/
 	margin: 0;
 	padding: 0;
 	vertical-align: top;
 	box-sizing: border-box;
-	border: solid 1px white;
+	/*border: solid 1px rgba(255,255,255, 0.6);*/
 }
 [data-type=snake] {
-	background: #000;
+	background: red;
 }
 [data-type=wall] {
 	background: black;
+}
+[data-type=loot] {
+	background: gold
 }
