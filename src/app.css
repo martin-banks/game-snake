@@ -1,0 +1,30 @@
+body {
+	margin: 0;
+}
+#app {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+}
+
+[data-type=tile]{
+	position: absolute;
+	display: inline-block;
+	top: 0;
+	left: 0;
+	width: 1vw;
+	height: 1vh;
+	background: lightgrey;
+	margin: 0;
+	padding: 0;
+	vertical-align: top;
+	box-sizing: border-box;
+	border: solid 1px white;
+}
+[data-type=snake] {
+	background: #000;
+}
+[data-type=wall] {
+	background: black;
+}
