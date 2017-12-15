@@ -24,22 +24,25 @@ let gameLoop = null
 function makeSnake(coords) {
 	coords
 		.map(s => document.querySelector(`[data-row="${s[0]}"][data-col="${s[1]}"]`))
-		.forEach(s => s.setAttribute('type', 'snake'))
+		.forEach(s => {
+			console.log(s)
+			s.setAttribute('data-type', 'snake')
+		})
 }
 
 function resetTiles() {
 	const allSnakeTiles = document.querySelectorAll('[data-type=snake]')
-	allSnakeTiles.forEach(t => t.setAttribute('type', 'tile'))
+	allSnakeTiles.forEach(t => t.setAttribute('data-type', 'tile'))
 }
 
 
 function startGame() {
 	app.innerHTML = tiles
-	makeSnake()
+	makeSnake(startPos)
 	console.log({gameLoop})
 	gameLoop = setInterval(() => {
 		resetTiles()
-		const newCoords = startPos.map(p => {
+		startPos = startPos.map(p => {
 			const newRow = p[0] + direction[0]
 			const newCol = p[1] + direction[1]
 			return [
@@ -47,7 +50,7 @@ function startGame() {
 				((newCol > 0) && (newCol < columns.length)) ? newCol : 0,
 			]
 		})
-		makeSnake(newCoords)
+		makeSnake(startPos)
 
 	}, interval)
 	console.log({gameLoop})
