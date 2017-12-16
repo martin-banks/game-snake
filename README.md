@@ -58,3 +58,5 @@ If the random tile chosen is not a plain tile type (snake or wall) then another 
 		- Starting size
 		- Grid size
 		- Color theme
+	- Remove loot fade after interval
+	- Render in canvas

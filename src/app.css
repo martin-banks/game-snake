@@ -1,6 +1,7 @@
 body {
 	margin: 0;
 	font-family: sans-serif;
+	background: #333;
 }
 #app {
 	width: 100vw;
@@ -10,8 +11,35 @@ body {
 }
 #score {
 	position: fixed;
-	top: 20px;
-	left: 20px;
+	top: 40px;
+	left: 40px;
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	background: rgba(0,0,0, 0.6);
+}
+#score p {
+	margin: 0;
+	padding: 8px 16px;
+	padding-bottom: 0;
+}
+#score h1 {
+	margin: 0;
+	padding: 0;
+}
+.uiView {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50% );
+	width: 60vw;
+	height: 60vh;
+	background: #fff;
+	border: solid 5px #fff;
+	border-radius: 12px;
+	box-sizing: border-box;
+	padding: 32px;
 }
 
 [data-type=tile],
@@ -39,4 +67,18 @@ body {
 }
 [data-type=loot] {
 	background: gold
+}
+
+button {
+	position: absolute;
+	display: block;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #333;
+	color: gold;
+	font-size: 16px;
+	font-weight: 600;
+	padding: 16px 0;
+	border-radius: 8px;
 }
