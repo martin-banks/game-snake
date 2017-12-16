@@ -11,7 +11,21 @@ const left = [0, -1]
 const right = [0, 1]
 let score = 0
 
-let startPos = [[Math.floor(grid / 2), Math.floor(grid / 2)]]
+// let startPos = [[Math.floor(grid / 2), Math.floor(grid / 2)]]
+// long snake for testing
+let startPos = [
+	[1,1],
+	[1,2],
+	[1,3],
+	[1,4],
+	[1,5],
+	[1,6],
+	[1,7],
+	[1,8],
+	[1,9],
+	[1,10],
+	[1,11]
+]
 let lootCoords = [0, 0]
 let direction = right
 let gameLoop = null
@@ -51,13 +65,16 @@ function makeSnake(coords) {
 			if (!s) return
 
 			s.setAttribute('data-type', 'snake')
-			s.innerHTML = i
+			// s.innerHTML = i
 		})
 }
 
 function resetTiles() {
 	const allSnakeTiles = document.querySelectorAll('[data-type=snake]')
-	allSnakeTiles.forEach(t => t.setAttribute('data-type', 'tile'))
+	allSnakeTiles.forEach(t => {
+		t.setAttribute('data-type', 'tile')
+		// t.innerHTML = ''
+	})
 }
 
 
@@ -114,9 +131,9 @@ function resetTiles() {
 function makeNewCoords(coords) {
 	const newRow = coords[0] + direction[0]
 	const newCol = coords[1] + direction[1]
-	const walls = allowWalls ? 1 : 0
-	const resetRow = direction === up ? (100 - (2 * walls)) : (0 + walls)
-	const resetCol = direction === left ? (100 - (2 * walls)) : (0 + walls)
+	const walls = allowWalls ? 0 : 1
+	const resetRow = direction === up ? (grid - (walls)) : (0 + walls)
+	const resetCol = direction === left ? (grid - (walls)) : (0 + walls)
 	const newCoords = [
 		((newRow >= (0 + walls)) && (newRow < (rows.length - walls))) ? newRow : resetRow,
 		((newCol >= (0 + walls)) && (newCol < (columns.length - walls))) ? newCol : resetCol,
@@ -127,21 +144,23 @@ function makeNewCoords(coords) {
 
 
 function updateGame() {
-	resetTiles()
 	let gotLoot = false
 	// check for loot tile
 	const newCoords = makeNewCoords(startPos[startPos.length - 1])
 	startPos.push(newCoords)
 	// console.log(startPos)
 	const checkTile = document.querySelector(`[data-row="${newCoords[0]}"][data-col="${newCoords[1]}"]`)
-	console.log(checkTile)
+	// console.log(checkTile)
 	if (allowWalls) {
 		if (checkTile && checkTile.getAttribute('data-type') === 'wall') {
-			stop()
-			window.alert('Game over')
+			gameOver('wall')
 			return [Math.floor(rows.length / 2), Math.floor(columns.length / 2)]
 		}
 	}
+	if (checkTile && checkTile.getAttribute('data-type') === 'snake') {
+			gameOver('snake')
+			return [Math.floor(rows.length / 2), Math.floor(columns.length / 2)]
+		}
 	if (startPos[startPos.length - 1][0] === lootCoords[0] && startPos[startPos.length - 1][1] === lootCoords[1]) {
 		gotLoot = true
 		score++
@@ -150,9 +169,8 @@ function updateGame() {
 	}
 	if (!gotLoot) {
 		startPos.shift(1)
-	} else {
-		console.log('you got loot')
 	}
+	resetTiles()
 	makeSnake(startPos)
 	allowDirectionChange = true
 	gotLoot = false
@@ -198,28 +216,27 @@ function stop() {
 	console.log({gameLoop})
 }
 
-function gameOver() {
+function gameOver(hit) {
 	stop()
-	window.alert('Game over')
+	window.alert(hit ? `Game over, you hit the ${hit}` : 'Game over')
 }
 
 function updateDirection(key) {
-	if (key == 38) {
-		// up arrow
+	if (key === 38) { // up arrow
 		return direction === down ? down : up
-	}	else if (key == 40) {
-		// down arrow
+	}	else if (key == 40) { // down arrow
 		return direction === up ? up : down
-	}	else if (key == 37) {
-		// left arrow
+	}	else if (key == 37) { // left arrow
 		return direction === right ? right : left
-	} else if (key == 39) {
-		// right arrow
+	} else if (key == 39) { // right arrow
 		return direction === left ? left : right
 	}
 }
 
 function handleKeyboard(e) {
+	if (e.keyCode === 27) {
+		gameOver()
+	}
 	if (!allowDirectionChange) return
 	allowDirectionChange = false
 	const { keyCode } = e
