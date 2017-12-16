@@ -7,6 +7,11 @@ body {
 	margin: 0;
 	padding: 0;
 }
+#score {
+	position: fixed;
+	top: 20px;
+	left: 20px;
+}
 
 [data-type=tile],
 [data-type=snake],
