@@ -4,7 +4,7 @@ const gridMax = 75
 const gridMin = 25
 
 const speedMax = 1000 - 400
-const speedMin = 1000 - 1000
+const speedMin = 1000 - 600
 let date = null
 
 let grid = 25
@@ -44,9 +44,12 @@ const ui = {
 }
 function mainView() {
 	return `<div id="mainView" class="uiView">
-		<h1>Welcome to Snake!</h1>
-		<p>Collect loot and grow but don't hit the walls (or yourself)</p>
+		<div class="header">
+			<h1>Welcome to Snake!</h1>
+			<p>Collect loot and grow but don't hit the walls (or yourself)</p>
+		</div>
 		<section class="options">
+			<h3>Options</h3>
 			<div class="options__gridSize">
 				<h4>Grid size</h4>
 				<input type="range" list="gridsizes" data-option="gridsize" >
@@ -98,13 +101,15 @@ function gameoverTemplate(hit) {
 		})
 		.join('')
 	return `<div id="gameOver" class="uiView">
-		<h3> Game over${hit ? `, you hit ${hit}` : ''}</h3>
-		<h1 id="finalScore">Score: ${score} points</h1>
-		<h4 class="topScores__title">Your top scores</h4>
-		<ul id="topScores">
-			${topScores}
-		</ul>
-		${ui.reset}
+		<div class="content">
+			<h3> Game over${hit ? `, you hit ${hit}` : ''}</h3>
+			<h1 id="finalScore">Score: ${score} points</h1>
+			<h4 class="topScores__title">Your top scores</h4>
+			<ul id="topScores">
+				${topScores}
+			</ul>
+			${ui.reset}
+		</div>
 	</div>`
 }
 function template(ri, ci) {
@@ -252,11 +257,11 @@ function optionSliderChange(e) {
 	const { value } = this
 	const option = this.getAttribute('data-option')
 	if (option === 'gamespeed') {
-		interval = 1000 - ((950) * (value / 100))
+		interval = 50 + (1000 - (1000 * (value / 100)))
 		console.log(interval)
 		return
 	} else if (option === 'gridsize') {
-		grid = gridMin + ((gridMax - gridMin) * (value / 100))
+		grid = Math.floor(gridMin + ((gridMax - gridMin) * (value / 100)))
 		console.log(grid)
 	}
 	return
@@ -272,6 +277,16 @@ function toggleWalls() {
 function renderStartScreen() {
 	game.innerHTML = mainView()
 	document.querySelectorAll('input').forEach(input => {
+		const option = input.getAttribute('data-option')
+		const { value } = input
+		if (option === 'gamespeed') {
+			// interval = 1000 - ((950) * (value / 100))
+			interval = 10 + ((150 * (value / 100)))
+			return
+		} else if (option === 'gridsize') {
+		grid = Math.floor(gridMin + ((gridMax - gridMin) * (value / 100)))
+			grid = gridMin + ((gridMax - gridMin) * (value / 100))
+		}
 		input.addEventListener('change', optionSliderChange)
 	})
 	document.querySelector('[data-option="wall"]').addEventListener('click', toggleWalls)
