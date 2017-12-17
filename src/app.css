@@ -3,6 +3,10 @@ body {
 	font-family: sans-serif;
 	background: #333;
 }
+p, h4 {
+	margin: 0;
+	padding: 0;
+}
 #app {
 	width: 100vw;
 	height: 100vh;
@@ -24,6 +28,26 @@ body {
 	padding: 8px 16px;
 	padding-bottom: 0;
 }
+.topScores__title {
+	border-top: solid 1px;
+	padding-top: 8px;
+}
+#topScores {
+	padding: 0;
+	list-style: none
+}
+#topScores li {
+	padding: 8px;
+	border-radius: 4px;
+}
+#topScores li:nth-of-type(even) {
+	background: #e2e2e2;
+}
+
+#topScores li.newBest {
+	color: red;
+}
+
 #score h1 {
 	margin: 0;
 	padding: 0;
@@ -33,13 +57,14 @@ body {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50% );
-	width: 60vw;
-	height: 60vh;
+	width: 90vw;
+	height: 90vh;
 	background: #fff;
 	border: solid 5px #fff;
 	border-radius: 12px;
 	box-sizing: border-box;
 	padding: 32px;
+	overflow: auto
 }
 
 [data-type=tile],

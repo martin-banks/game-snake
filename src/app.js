@@ -1,5 +1,14 @@
-const grid = 25
-const interval = 100
+
+
+const gridMax = 75
+const gridMin = 25
+
+const speedMax = 1000 - 400
+const speedMin = 1000 - 1000
+let date = null
+
+let grid = 25
+let interval = 100
 const lootInterval = 5000
 const up = [-1, 0]
 const down = [1, 0]
@@ -11,8 +20,8 @@ const app = document.querySelector('#app')
 const game = document.querySelector('#game')
 const startButton = document.querySelector('button#start')
 
-const rows = Array.from(new Array(grid))
-const columns = Array.from(new Array(grid))
+const rows = () => Array.from(new Array(grid))
+const columns = () => Array.from(new Array(grid))
 const startPos = [
 	[Math.floor(grid / 2), Math.floor(grid / 2)],
 	[Math.floor(grid / 2) - 1, Math.floor(grid / 2) - 1],
@@ -31,36 +40,74 @@ const allowWalls = true
 
 const ui = {
 	start: '<button id="start" data-type="start">New Game</button>',
+	reset: '<button id="start" data-type="reset">Play again?</button>',
 }
 function mainView() {
 	return `<div id="mainView" class="uiView">
 		<h1>Welcome to Snake!</h1>
 		<p>Collect loot and grow but don't hit the walls (or yourself)</p>
+		<section class="options">
+			<div class="options__gridSize">
+				<h4>Grid size</h4>
+				<input type="range" list="gridsizes" data-option="gridsize" >
+					<datalist id="gridsizes">
+					  <option value="0" label="Tiny">
+					  <option value="25" label="Small">
+					  <option value="50" label="Medium">
+					  <option value="75" label="Large">
+					  <option value="100" label="Huge">
+					</datalist>
+				</input>
+			</div>
+			<div class="options__speed">
+				<h4>Game speed</h4>
+				<input type="range" list="gamespeeds" data-option="gamespeed">
+					<datalist id="gamespeeds">
+					  <option value="0" label="">
+					  <option value="25" label="">
+					  <option value="50" label="">
+					  <option value="75" label="">
+					  <option value="100" label="">
+					</datalist>
+				</input>
+			</div>
+			<!--<div class="options__walls">
+				<h4>Use walls</h4>
+			</div>-->
+		</section>
 		${ui.start}
 	</div>`
 }
 function gameoverTemplate(hit) {
 	const { localStorage } = window
 	const topScores = Object.keys(localStorage)
-		.sort((a, b) => localStorage[b] - localStorage[a])
+		.sort((a, b) => JSON.parse(localStorage[b]).score - JSON.parse(localStorage[a]).score)
 		.slice(0, 5)
-		.map(key => `<li>${localStorage[key]}</li>`)
+		.map(key => {
+			const item = JSON.parse(localStorage[key])
+			console.log({ key, date })
+			return `<li class="${key === date ? 'newBest' : 'nope'}">
+				<h4>Score: ${item.score}</h4>
+				<p>Game speed: ${item.speed}</p>
+				<p>Grid size: ${item.grid} x ${item.grid}</p>
+				<p>Walls: ${item.walls ? 'On' : 'Off'}</p>
+			</li>`
+		})
 		.join('')
 	return `<div id="gameOver" class="uiView">
 		<h3> Game over${hit ? `, you hit ${hit}` : ''}</h3>
 		<h1 id="finalScore">Score: ${score} points</h1>
-		<h6>Your top scores</h6>
-		<ul>
+		<h4 class="topScores__title">Your top scores</h4>
+		<ul id="topScores">
 			${topScores}
 		</ul>
-		<p>Play again?</p>
-		${ui.start}
+		${ui.reset}
 	</div>`
 }
 function template(ri, ci) {
 	let type = 'tile'
 	if (allowWalls) {
-		if (ri === 0 || ci === 0 || ri === (rows.length - 1) || ci === (columns.length - 1)) {
+		if (ri === 0 || ci === 0 || ri === (grid - 1) || ci === (grid - 1)) {
 			type = 'wall'
 		}
 	}
@@ -75,8 +122,8 @@ function template(ri, ci) {
 		"
 	></div>`
 }
-const tiles = rows
-	.map((r, ri) => columns.map((c, ci) => template(ri, ci)).join(''))
+const makeTiles = () => rows()
+	.map((r, ri) => columns().map((c, ci) => template(ri, ci)).join(''))
 	.join('')
 
 
@@ -108,8 +155,8 @@ function makeNewCoords(coords) {
 	const resetRow = direction === up ? (grid - (walls)) : (0 + walls)
 	const resetCol = direction === left ? (grid - (walls)) : (0 + walls)
 	const newCoords = [
-		((newRow >= (0 + walls)) && (newRow < (rows.length - walls))) ? newRow : resetRow,
-		((newCol >= (0 + walls)) && (newCol < (columns.length - walls))) ? newCol : resetCol,
+		((newRow >= (0 + walls)) && (newRow < (grid - walls))) ? newRow : resetRow,
+		((newCol >= (0 + walls)) && (newCol < (grid - walls))) ? newCol : resetCol,
 	]
 	return newCoords
 }
@@ -127,12 +174,12 @@ function updateGame() {
 	if (allowWalls) {
 		if (checkTile && checkTile.getAttribute('data-type') === 'wall') {
 			gameOver('the wall')
-			return [Math.floor(rows.length / 2), Math.floor(columns.length / 2)]
+			return [Math.floor(grid / 2), Math.floor(grid / 2)]
 		}
 	}
 	if (checkTile && checkTile.getAttribute('data-type') === 'snake') {
 		gameOver('yourself!')
-		return [Math.floor(rows.length / 2), Math.floor(columns.length / 2)]
+		return [Math.floor(grid / 2), Math.floor(grid / 2)]
 	}
 	if (snakeCoords[snakeCoords.length - 1][0] === lootCoords[0] && snakeCoords[snakeCoords.length - 1][1] === lootCoords[1]) {
 		gotLoot = true
@@ -160,12 +207,13 @@ function dropLoot() {
 	resetLoot()
 	const makeCoords = () => {
 		const total = allowWalls ? grid - 2 : grid
+		console.log(grid)
 		const offset = allowWalls ? 1 : 0
 		lootCoords = [Math.floor(Math.random() * total) + offset, Math.floor(Math.random() * total) + offset]
 		if (snakeCoords.includes(lootCoords)) {
 			return makeCoords()
 		}
-		// console.log(lootCoords)
+		console.log(lootCoords)
 		document.querySelector(`[data-row="${lootCoords[0]}"][data-col="${lootCoords[1]}"]`)
 			.setAttribute('data-type', 'loot')
 		return
@@ -174,10 +222,12 @@ function dropLoot() {
 }
 
 function start() {
+	date = (new Date()).getTime().toString()
+	console.log({ grid, interval })
 	snakeCoords = new Array(...startPos)
 	score = 0
 	console .log(snakeCoords)
-	game.innerHTML = tiles
+	game.innerHTML = makeTiles()
 	makeSnake(startPos)
 	// console.log({gameLoop})
 	gameLoop = setInterval(updateGame, interval)
@@ -195,13 +245,39 @@ function stop() {
 	return 'game stopped'
 }
 
+function optionSliderChange(e) {
+	const { value } = this
+	const option = this.getAttribute('data-option')
+	if (option === 'gamespeed') {
+		interval = 1000 - ((950) * (value / 100))
+		console.log(interval)
+		return
+	} else if (option === 'gridsize') {
+		grid = gridMin + ((gridMax - gridMin) * (value / 100))
+		console.log(grid)
+	}
+	return
+}
+
+function renderStartScreen() {
+	game.innerHTML = mainView()
+	document.querySelectorAll('input').forEach(input => {
+		input.addEventListener('change', optionSliderChange)
+	})
+}
+
+
 function gameOver(hit) {
 	stop()
-	const date = new Date()
-	window.localStorage.setItem(date, score)
+	const saveScore = {
+		score,
+		grid,
+		speed: interval,
+		walls: allowWalls,
+	}
+	window.localStorage.setItem(date, JSON.stringify(saveScore))
 	game.innerHTML = gameoverTemplate(hit)
 	document.querySelector('#score').innerHTML = ''
-	
 }
 
 function updateDirection(key) {
@@ -229,13 +305,17 @@ function handleKeyboard(e) {
 	direction = updateDirection(keyCode)
 	// console.log({direction})
 }
-game.innerHTML = mainView()
 window.addEventListener('keydown', handleKeyboard)
 // startButton.addEventListener('click', start)
 
 app.addEventListener('click', e => {
 	const { target } = e
-	if (target.getAttribute('data-type') === 'start') {
+	const type = target.getAttribute('data-type')
+	if (type === 'start') {
 		start()
+	} else if (type === 'reset') {
+		renderStartScreen()
 	}
 })
+
+renderStartScreen()
