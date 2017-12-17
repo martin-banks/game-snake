@@ -36,7 +36,7 @@ let gameLoop = null
 let lootLoop = null
 
 let allowDirectionChange = true
-const allowWalls = true
+let allowWalls = true
 
 const ui = {
 	start: '<button id="start" data-type="start">New Game</button>',
@@ -71,9 +71,12 @@ function mainView() {
 					</datalist>
 				</input>
 			</div>
-			<!--<div class="options__walls">
+			<div class="options__walls">
 				<h4>Use walls</h4>
-			</div>-->
+				<div class="option__toggleWrapper" data-option="wall" data-active="${allowWalls}">
+					<span class="option__toggle"></span>
+				</div>
+			</div>
 		</section>
 		${ui.start}
 	</div>`
@@ -151,7 +154,7 @@ function resetTiles() {
 function makeNewCoords(coords) {
 	const newRow = coords[0] + direction[0]
 	const newCol = coords[1] + direction[1]
-	const walls = allowWalls ? 0 : 1
+	const walls = allowWalls ? 0 : 0
 	const resetRow = direction === up ? (grid - (walls)) : (0 + walls)
 	const resetCol = direction === left ? (grid - (walls)) : (0 + walls)
 	const newCoords = [
@@ -259,11 +262,19 @@ function optionSliderChange(e) {
 	return
 }
 
+function toggleWalls() {
+	console.log('click')
+	const status = this.getAttribute('data-active') === 'true'
+	this.setAttribute('data-active', !status)
+	allowWalls = !status
+}
+
 function renderStartScreen() {
 	game.innerHTML = mainView()
 	document.querySelectorAll('input').forEach(input => {
 		input.addEventListener('change', optionSliderChange)
 	})
+	document.querySelector('[data-option="wall"]').addEventListener('click', toggleWalls)
 }
 
 

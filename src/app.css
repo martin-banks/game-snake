@@ -41,11 +41,11 @@ p, h4 {
 	border-radius: 4px;
 }
 #topScores li:nth-of-type(even) {
-	background: #e2e2e2;
+	background: #f6f6f6;
 }
 
 #topScores li.newBest {
-	color: red;
+	color: darkorange;
 }
 
 #score h1 {
@@ -106,4 +106,38 @@ button {
 	font-weight: 600;
 	padding: 16px 0;
 	border-radius: 8px;
+}
+
+
+.option__toggleWrapper {
+	transition: all 300ms;
+	position: relative;
+	width: 80px;
+	height: 40px;
+	border-radius: 40px;
+}
+
+.option__toggleWrapper[data-active=true] {
+	background: lime;
+}
+.option__toggleWrapper[data-active=false] {
+	background: #e2e2e2;
+}
+
+.option__toggle {
+	transition: all 300ms;
+	position: absolute;
+	top: 5px;
+	width: 30px;
+	height: 30px;
+	left: 5px;
+	border-radius: 100%;
+	background: #fff;
+	box-shadow: 0 1px 4px rgba(0,0,0, 0.4);
+}
+
+[data-active=false] .option__toggle {
+}
+[data-active=true] .option__toggle {
+	transform: translateX(40px);
 }
