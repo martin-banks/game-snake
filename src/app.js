@@ -3,13 +3,13 @@
 const gridMax = 75
 const gridMin = 25
 
-const speedMax = 1000 - 400
-const speedMin = 1000 - 600
+// const speedMax = 1000 - 400
+// const speedMin = 1000 - 600
 let date = null
 
 let grid = 25
 let interval = 100
-const lootInterval = 5000
+
 const up = [-1, 0]
 const down = [1, 0]
 const left = [0, -1]
@@ -18,7 +18,7 @@ let score = 0
 
 const app = document.querySelector('#app')
 const game = document.querySelector('#game')
-const startButton = document.querySelector('button#start')
+
 
 const rows = () => Array.from(new Array(grid))
 const columns = () => Array.from(new Array(grid))
@@ -33,7 +33,7 @@ let snakeCoords = startPos
 let lootCoords = [0, 0]
 let direction = right
 let gameLoop = null
-let lootLoop = null
+const lootLoop = null
 
 let allowDirectionChange = true
 let allowWalls = true
@@ -91,7 +91,7 @@ function gameoverTemplate(hit) {
 		.slice(0, 5)
 		.map(key => {
 			const item = JSON.parse(localStorage[key])
-			console.log({ key, date })
+			// console.log({ key, date })
 			return `<li class="${key === date ? 'newBest' : 'nope'}">
 				<h4>Score: ${item.score}</h4>
 				<p>Game speed: ${item.speed}</p>
@@ -138,12 +138,9 @@ const makeTiles = () => rows()
 function makeSnake(coords) {
 	coords
 		.map(s => document.querySelector(`[data-row="${s[0]}"][data-col="${s[1]}"]`))
-		.forEach((s, i) => {
-			// console.log(s)
+		.forEach(s => {
 			if (!s) return
-
 			s.setAttribute('data-type', 'snake')
-			// s.innerHTML = i
 		})
 }
 
@@ -151,7 +148,6 @@ function resetTiles() {
 	const allSnakeTiles = document.querySelectorAll('[data-type=snake]')
 	allSnakeTiles.forEach(t => {
 		t.setAttribute('data-type', 'tile')
-		// t.innerHTML = ''
 	})
 }
 
@@ -215,60 +211,45 @@ function dropLoot() {
 	resetLoot()
 	const makeCoords = () => {
 		const total = allowWalls ? grid - 2 : grid
-		console.log(grid)
 		const offset = allowWalls ? 1 : 0
 		lootCoords = [Math.floor(Math.random() * total) + offset, Math.floor(Math.random() * total) + offset]
 		if (snakeCoords.includes(lootCoords)) {
 			return makeCoords()
 		}
-		console.log(lootCoords)
 		document.querySelector(`[data-row="${lootCoords[0]}"][data-col="${lootCoords[1]}"]`)
 			.setAttribute('data-type', 'loot')
-		return
 	}
 	makeCoords()
 }
 
 function start() {
 	date = (new Date()).getTime().toString()
-	console.log({ grid, interval })
 	snakeCoords = new Array(...startPos)
 	score = 0
-	console .log(snakeCoords)
 	game.innerHTML = makeTiles()
 	makeSnake(startPos)
-	// console.log({gameLoop})
 	gameLoop = setInterval(updateGame, interval)
 	dropLoot()
-	// lootLoop = setInterval(dropLoot, lootInterval)
-	// console.log({gameLoop})
 	return 'game started'
 }
 
 function stop() {
-	console.log({ gameLoop })
 	clearInterval(gameLoop)
-	clearInterval(lootLoop)
 	gameLoop = null
 	return 'game stopped'
 }
 
-function optionSliderChange(e) {
+function optionSliderChange() {
 	const { value } = this
 	const option = this.getAttribute('data-option')
 	if (option === 'gamespeed') {
 		interval = 50 + (1000 - (1000 * (value / 100)))
-		console.log(interval)
-		return
 	} else if (option === 'gridsize') {
 		grid = Math.floor(gridMin + ((gridMax - gridMin) * (value / 100)))
-		console.log(grid)
 	}
-	return
 }
 
 function toggleWalls() {
-	console.log('click')
 	const status = this.getAttribute('data-active') === 'true'
 	this.setAttribute('data-active', !status)
 	allowWalls = !status
@@ -284,7 +265,7 @@ function renderStartScreen() {
 			interval = 10 + ((150 * (value / 100)))
 			return
 		} else if (option === 'gridsize') {
-		grid = Math.floor(gridMin + ((gridMax - gridMin) * (value / 100)))
+			grid = Math.floor(gridMin + ((gridMax - gridMin) * (value / 100)))
 			grid = gridMin + ((gridMax - gridMin) * (value / 100))
 		}
 		input.addEventListener('change', optionSliderChange)
@@ -316,6 +297,7 @@ function updateDirection(key) {
 	} else if (key === 39) { // right arrow
 		return direction === left ? left : right
 	}
+	return null
 }
 
 function handleKeyboard(e) {
@@ -325,14 +307,12 @@ function handleKeyboard(e) {
 	if (!allowDirectionChange) return
 	allowDirectionChange = false
 	const { keyCode } = e
-	const arrows = [38, 40, 37, 39]
-	// up down left right
+	const arrows = [38, 40, 37, 39] // up down left right
 	if (!arrows.includes(keyCode)) return
 	direction = updateDirection(keyCode)
-	// console.log({direction})
 }
+
 window.addEventListener('keydown', handleKeyboard)
-// startButton.addEventListener('click', start)
 
 app.addEventListener('click', e => {
 	const { target } = e
