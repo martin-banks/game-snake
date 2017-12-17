@@ -45,18 +45,9 @@ If the random tile chosen is not a plain tile type (snake or wall) then another 
 
 # TODO
 	- Touch input support
-	- Save scores to local storage
-	- Scoreboard
 	- Modularise code
-	- Babel transpaile for briader borwser support
-	- Game UI
-		- Start new game
-		- return to  UI after game over
+	- Babel transpile for broader borwser support
 	- Game options
-		- Use walls
-		- Game speed
 		- Starting size
-		- Grid size
 		- Color theme
-	- Remove loot fade after interval
 	- Render in canvas
