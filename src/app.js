@@ -1,4 +1,4 @@
-const grid = 50
+const grid = 25
 const interval = 100
 const lootInterval = 5000
 const up = [-1, 0]
@@ -13,25 +13,14 @@ const startButton = document.querySelector('button#start')
 
 const rows = Array.from(new Array(grid))
 const columns = Array.from(new Array(grid))
-
-let startPos = [
+const startPos = [
 	[Math.floor(grid / 2), Math.floor(grid / 2)],
 	[Math.floor(grid / 2) - 1, Math.floor(grid / 2) - 1],
 ]
+let snakeCoords = startPos
+
 // long snake for testing
-// let startPos = [
-// 	[1,1],
-// 	[1,2],
-// 	[1,3],
-// 	[1,4],
-// 	[1,5],
-// 	[1,6],
-// 	[1,7],
-// 	[1,8],
-// 	[1,9],
-// 	[1,10],
-// 	[1,11]
-// ]
+// let snakeCoords = [ [1,1], [1,2], [1,3], [1,4], [1,5], [1,6], [1,7], [1,8], [1,9], [1,10], [1,11] ]
 let lootCoords = [0, 0]
 let direction = right
 let gameLoop = null
@@ -51,9 +40,19 @@ function mainView() {
 	</div>`
 }
 function gameoverTemplate(hit) {
+	const { localStorage } = window
+	const topScores = Object.keys(localStorage)
+		.sort((a, b) => localStorage[b] - localStorage[a])
+		.slice(0, 5)
+		.map(key => `<li>${localStorage[key]}</li>`)
+		.join('')
 	return `<div id="gameOver" class="uiView">
 		<h3> Game over${hit ? `, you hit ${hit}` : ''}</h3>
 		<h1 id="finalScore">Score: ${score} points</h1>
+		<h6>Your top scores</h6>
+		<ul>
+			${topScores}
+		</ul>
 		<p>Play again?</p>
 		${ui.start}
 	</div>`
@@ -112,7 +111,6 @@ function makeNewCoords(coords) {
 		((newRow >= (0 + walls)) && (newRow < (rows.length - walls))) ? newRow : resetRow,
 		((newCol >= (0 + walls)) && (newCol < (columns.length - walls))) ? newCol : resetCol,
 	]
-
 	return newCoords
 }
 
@@ -120,9 +118,9 @@ function makeNewCoords(coords) {
 function updateGame() {
 	let gotLoot = false
 	// check for loot tile
-	const newCoords = makeNewCoords(startPos[startPos.length - 1])
-	startPos.push(newCoords)
-	// console.log(startPos)
+	const newCoords = makeNewCoords(snakeCoords[snakeCoords.length - 1])
+	snakeCoords.push(newCoords)
+	// console.log(snakeCoords)
 	const checkTile = document
 		.querySelector(`[data-row="${newCoords[0]}"][data-col="${newCoords[1]}"]`)
 	// console.log(checkTile)
@@ -136,18 +134,17 @@ function updateGame() {
 		gameOver('yourself!')
 		return [Math.floor(rows.length / 2), Math.floor(columns.length / 2)]
 	}
-	if (startPos[startPos.length - 1][0] === lootCoords[0] && startPos[startPos.length - 1][1] === lootCoords[1]) {
+	if (snakeCoords[snakeCoords.length - 1][0] === lootCoords[0] && snakeCoords[snakeCoords.length - 1][1] === lootCoords[1]) {
 		gotLoot = true
 		score++
 		document.querySelector('#score').innerHTML = `<p>Score</p><h1>${score}</h1>`
-		console.log('Loot!', startPos.length)
 		dropLoot()
 	}
 	if (!gotLoot) {
-		startPos.shift(1)
+		snakeCoords.shift(1)
 	}
 	resetTiles()
-	makeSnake(startPos)
+	makeSnake(snakeCoords)
 	allowDirectionChange = true
 	gotLoot = false
 }
@@ -165,7 +162,7 @@ function dropLoot() {
 		const total = allowWalls ? grid - 2 : grid
 		const offset = allowWalls ? 1 : 0
 		lootCoords = [Math.floor(Math.random() * total) + offset, Math.floor(Math.random() * total) + offset]
-		if (startPos.includes(lootCoords)) {
+		if (snakeCoords.includes(lootCoords)) {
 			return makeCoords()
 		}
 		// console.log(lootCoords)
@@ -177,6 +174,9 @@ function dropLoot() {
 }
 
 function start() {
+	snakeCoords = new Array(...startPos)
+	score = 0
+	console .log(snakeCoords)
 	game.innerHTML = tiles
 	makeSnake(startPos)
 	// console.log({gameLoop})
@@ -193,13 +193,15 @@ function stop() {
 	clearInterval(lootLoop)
 	gameLoop = null
 	return 'game stopped'
-
 }
 
 function gameOver(hit) {
 	stop()
+	const date = new Date()
+	window.localStorage.setItem(date, score)
 	game.innerHTML = gameoverTemplate(hit)
 	document.querySelector('#score').innerHTML = ''
+	
 }
 
 function updateDirection(key) {
