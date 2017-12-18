@@ -44,7 +44,8 @@ If the random tile chosen is not a plain tile type (snake or wall) then another 
 
 
 # TODO
-	- Touch input support
+	- Touch input support - for mobile devices
+	- On screen buttons for better cross platform supports
 	- Modularise code
 	- Babel transpile for broader borwser support
 	- Game options

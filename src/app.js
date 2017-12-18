@@ -1,3 +1,11 @@
+// DOM ELEMENTS
+// Storing key dom elements
+const app = document.querySelector('#app')
+const game = document.querySelector('#game')
+
+// Check for mobile devices
+const isMobile = /iPad|Android|webOS|iPhone|iPod|Blackberry/.test(navigator.userAgent) && !window.MSStream
+
 // SET INITIAL VARIABLE STATES
 // Grid size options
 const gridMax = 75
@@ -39,12 +47,6 @@ let foodCoords = [0, 0]
 // so it can be cleared at game over
 let gameLoop = null
 // const foodLoop = null
-
-
-// DOM ELEMENTS
-// Storing key dom elements
-const app = document.querySelector('#app')
-const game = document.querySelector('#game')
 
 
 // Build the game grid
@@ -420,5 +422,24 @@ app.addEventListener('click', e => {
 
 
 // START THE APP
-// Call the start screen render function
-renderStartScreen()
+if (isMobile) {
+	// Game does not work on mobile (requires keyboard to play)
+	// If mobile is detected, display message
+	const message = 'Sorry, this game isn\'t supported on this device yet, a keyboard is required to play'
+	window.alert(message)
+} else {
+	// Call the start screen render function
+	renderStartScreen()
+}
+
+
+// 
+// 
+// NEW FEATURES
+// 
+// 
+
+// Touch input
+window.addEventListener('dragstart', e => {
+	console.log('dragging', e)
+})
