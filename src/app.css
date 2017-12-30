@@ -1,7 +1,10 @@
 body {
 	margin: 0;
 	font-family: sans-serif;
-	background: #666;
+	background: #e2e2e2;
+}
+body * {
+	box-sizing: border-box;	
 }
 p, h4 {
 	margin: 0;
@@ -13,17 +16,33 @@ p, h4 {
 	/*max-width: 600px;*/
 }
 #app {
-	width: 100vw;
-	height: 100vh;
-	margin: 0;
+	position: relative;
+	margin: 0 auto;
 	padding: 0;
+}
+
+#app[data-orientation=landscape] {
+	width: 90vh;
+	height: 90vh;
+}
+#app[data-orientation=portrait] {
+	width: 90vw;
+	height: 90vw;
 }
 
 [data-checker=true] [data-type=row]:nth-of-type(even) [data-type=tile]:nth-of-type(even),
 [data-checker=true] [data-type=row]:nth-of-type(odd) [data-type=tile]:nth-of-type(odd) {
-	background: rgba(0,0,0, 0.1)
+	background: rgba(255,255,255, 0.8)
+}
+[data-checker=true] [data-type=row]:nth-of-type(even) [data-type=tile]:nth-of-type(odd),
+[data-checker=true] [data-type=row]:nth-of-type(odd) [data-type=tile]:nth-of-type(even) {
+	background: rgba(0,0,0, 0)
 }
 
+
+#game {
+	position: relative;
+}
 
 #score {
 	position: fixed;
@@ -46,7 +65,7 @@ p, h4 {
 }
 #topScores {
 	padding: 0;
-	li`-style: none
+	list-style: none
 }
 #topScores li {
 	padding: 8px;
@@ -66,16 +85,17 @@ p, h4 {
 }
 .uiView {
 	position: absolute;
-	top: 50%;
+	top: 50px;
 	left: 50%;
-	transform: translate(-50%, -50% );
-	width: 90vw;
-	height: 90vh;
+	transform: translateX(-50%);
+	/* margin: 0 auto; */
+	width: 80vw;
+	max-width: 600px;
 	background: #fff;
 	border: solid 5px #fff;
 	border-radius: 12px;
-	box-sizing: border-box;
 	padding: 32px;
+	padding-bottom: 80px;
 	overflow: auto
 }
 
@@ -102,10 +122,10 @@ p, h4 {
 	/*border: solid 1px rgba(255,255,255, 0.6);*/
 }
 [data-type=snake] {
-	background: #bada55;
+	background: #779b02;
 }
 [data-type=wall] {
-	background: black;
+	background: rgba(0,0,0, 0.8);
 }
 [data-type=food] {
 	background: red;

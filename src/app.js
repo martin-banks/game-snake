@@ -6,6 +6,9 @@ const game = document.querySelector('#game')
 // Check for mobile devices
 const isMobile = /iPad|Android|webOS|iPhone|iPod|Blackberry/.test(navigator.userAgent) && !window.MSStream
 
+// check orientation, assigned to app container later
+const orientation = window.innerWidth >= window.innerHeight ? 'landscape' : 'portrait'
+
 // SET INITIAL VARIABLE STATES
 // Grid size options
 const gridMax = 75
@@ -150,32 +153,37 @@ function tileTemplate(ri, ci) {
 			type = 'wall'
 		}
 	}
+	const unit = orientation === 'landscape' ? 'vh' : 'vw'
+	const tileSize = (100 / grid) * 0.9
 	return `<div 
 			data-type="${type}"
 			data-row=${ri}
 			data-col=${ci}
 			style="
-				width: ${(100 / grid)}vw;
-				height: ${(100 / grid)}vh;
-				transform: translate(${ci * (100 / grid)}vw, ${ri * (100 / grid)}vh)
+				top: 0;
+				left: 0;
+				width: ${tileSize}${unit};
+				height: ${tileSize}${unit};
+				transform: translate(${ci * tileSize}${unit}, ${ri * tileSize}${unit})
 			"
 		></div>`
-	}
+}
 		
 		
-	// RESET GAME ELEMENTS
-	// Resets all snake tiles to tile type
-	function resetTiles() {
-		const allSnakeTiles = document.querySelectorAll('[data-type=snake]')
-		allSnakeTiles.forEach(t => {
-			t.setAttribute('data-type', 'tile')
-		})
-	}
-	// Removes all food elements from the game board
-	function resetfood() {
-		document.querySelectorAll('[data-type=food]')
-			.forEach(l => l.setAttribute('data-type', 'tile'))
-	}
+// RESET GAME ELEMENTS
+// Resets all snake tiles to tile type
+function resetTiles() {
+	const allSnakeTiles = document.querySelectorAll('[data-type=snake]')
+	allSnakeTiles.forEach(t => {
+		t.setAttribute('data-type', 'tile')
+	})
+}
+// Removes all food elements from the game board
+function resetfood() {
+	document
+		.querySelectorAll('[data-type=food]')
+		.forEach(l => l.setAttribute('data-type', 'tile'))
+}
 
 
 // BUILDING THE GAME ELEMENTS
@@ -405,6 +413,10 @@ function handleKeyboard(e) {
 }
 
 
+// ADD ORIENTATION ATTRIBUTE TO APP CONTAINER
+app.setAttribute('data-orientation', orientation)
+
+
 // ADD EVENT LISTENERS
 // Listen for keyboard events
 window.addEventListener('keydown', handleKeyboard)
@@ -434,12 +446,12 @@ if (isMobile) {
 
 
 // 
-// 
+// TODO
 // NEW FEATURES
 // 
 // 
 
 // Touch input
-window.addEventListener('dragstart', e => {
-	console.log('dragging', e)
-})
+// window.addEventListener('dragstart', e => {
+// 	console.log('dragging', e)
+// })
