@@ -1,24 +1,59 @@
+#### CODING CHALLENGE
 # game-snake
-Remake of the classic game snake in JavaScript
+Remake the classic game snake in JavaScript
 
-I'm not trying to create the best version of this game, this a quick remake to see if I can ...
+I'm not trying to create the best version of this game or introduce anything, this a quick coding challenge to understand a write the logic behind a simple game.
+
+### Key targets
+	[x] Programatically create a game board.
+	[x] Create a snake that continuously moves in a single direction
+	[x] If the snake runs into itself or a wall, the game game is over
+	[x] Food spawns randomly on the game board, when the snake eats the food (front of snake hits food)
+ the snake will grow by one frame
+	[x] Record the players scores for each game session and write to local storage
+
+### Bonus points
+	Game options for
+		[x] Grid size
+		[x] Game speed
+		[x] Use walls
+
+--
+
+# Learning points
+#### Array manipulation.
+The basic approach I took with this was to consider each aspect of the game as a series of arrays; the board is an aray of rows, each row is an array of columns. The snake is an array of coordinates and coordinates are an array of values.
+
+This was a great refresher of working with arrays some of which I haven't used in projects before.
+
+#### The 'this' keyword
+Using 'this' in the factory functions has forced me to consider scope more while coding, it still feels a bit like trap waiting to trip trip me up but much more confident around it now.
+
+--
 
 
 # How to play
 ## Goal
-Make your snake as big as possible. Use the arrow keys to move around the game board eating food. The more you eat thi higher your score and the bigger the snake grows.
+Make your snake as big as possible! Use the arrow keys to change direction eating food as it appears. The more you eat thi higher your score and the bigger the snake grows.
 
 ## Controls
 Your snake never tops moving! use the arrow keys to move in that direction.
 
 ## Winning
-Bragging rites only, play as long as you can
+Bragging rites only, scores are stored locally try and beat your personal best
 
 ## Losing
 Game ends if you hit the woll or yourself, choose you path wisely and don't get trapped
 
+--
+
 # Tech
-Vanilla Javascript (using ES6 features) web app
+Written in vanilla Javascript (using ES6 features) and a little css, no fancy libraries or build tools we used, harmed or created in this game.
+
+_NOTE_
+This game requires a modern browser (Chrome, Firefox, Safari) and a keyboard to play. 
+Mobile devices are not supported
+
 
 ## Setup
 Creates a grid of divs each with a unique combination of row and columns attributes as tile type.
@@ -52,3 +87,6 @@ If the random tile chosen is not a plain tile type (snake or wall) then another 
 		- Color theme
 	- Render in canvas
 	- Separate scoreboards into different app setting combinations
+	- Sore modifiers based on difficulty (board size and game speed)
+
+
