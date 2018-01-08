@@ -409,6 +409,7 @@ function handleKeyboard(e) {
 	const arrows = [38, 40, 37, 39] // up down left right
 	// if key press is not an arrow, stop function here
 	if (!arrows.includes(keyCode)) return 
+	// else update the direction accordingly
 	direction = updateDirection(keyCode)
 }
 
